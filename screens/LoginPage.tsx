@@ -1,27 +1,32 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Text, StyleSheet, View, Image, TouchableOpacity, Alert} from 'react-native'
 import { TextInput } from 'react-native-gesture-handler';
 import useFireBaseAuth from '../hooks/useAuthFB';
 
 
 export default function LoginPage({ navigation }) {
-
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [login, error]  = useFireBaseAuth();
+  const {login, error}  = useFireBaseAuth();
 
   const handleLogIn = async () => {
     if (!email || !password) {
       Alert.alert('Error', 'Email and password are required')
       return;
     }
+
     await login(email, password)
-    if (!error) {
+
+    if (error) {
+      if (typeof error === "string") {
+        Alert.alert('error', error)
+      } else {
+        Alert.alert('Error', error.message)
+      }
+    } else{
       Alert.alert('Sign in', 'Loading...')
       navigation.navigate("HomePage")
-    } else {
-      Alert.alert('Error', error.message)
-    }
+    } 
   }
     return (
       <View style={styles.padre}>
